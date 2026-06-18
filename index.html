@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BaggageCheck — Airport Baggage Tool</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- Top Bar -->
+<header class="topbar">
+  <button class="topbar-icon-btn" id="settingsBtn" onclick="location.href='settings.html'" title="Settings">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+    </svg>
+  </button>
+
+  <span class="topbar-title">BaggageCheck</span>
+
+  <button class="topbar-icon-btn" id="themeToggleBtn" title="Toggle light/dark mode">
+    <svg id="iconLight" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+      <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+    </svg>
+    <svg id="iconDark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+    </svg>
+  </button>
+</header>
+
+<main class="page">
+
+  <!-- Weight Limit Cards -->
+  <div class="limits-row" id="limitCards">
+    <!-- Checked Card -->
+    <div class="limit-card">
+      <div class="limit-card-label">Limit</div>
+      <div class="limit-card-type">Checked</div>
+      <div style="display:flex;align-items:baseline;gap:2px">
+        <input type="number" class="limit-card-weight limit-edit-input" id="checkedLimitDisplay" value="25" min="1" max="200" step="0.5" title="Tap to edit limit" />
+        <span class="limit-card-unit">kg</span>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-label">
+          <span id="checkedUsed">0 kg used</span>
+          <span id="checkedRemain">25 kg left</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="checkedBar" style="width:0%"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cabin Card -->
+    <div class="limit-card">
+      <div class="limit-card-label">Limit</div>
+      <div class="limit-card-type">Cabin</div>
+      <div style="display:flex;align-items:baseline;gap:2px">
+        <input type="number" class="limit-card-weight limit-edit-input" id="cabinLimitDisplay" value="7" min="1" max="100" step="0.5" title="Tap to edit limit" />
+        <span class="limit-card-unit">kg</span>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-label">
+          <span id="cabinUsed">0 kg used</span>
+          <span id="cabinRemain">7 kg left</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="cabinBar" style="width:0%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Bag Panel -->
+  <div class="panel">
+    <div class="panel-title">Add Bag</div>
+
+    <div class="type-tabs">
+      <button class="type-tab active" id="tabChecked" onclick="selectType('checked')">
+        ✈ Checked
+      </button>
+      <button class="type-tab" id="tabCabin" onclick="selectType('cabin')">
+        🎒 Cabin
+      </button>
+    </div>
+
+    <div class="input-row">
+      <div class="scale-input-wrap">
+        <input
+          type="number"
+          class="scale-input"
+          id="scaleInput"
+          placeholder="0.0"
+          step="0.1"
+          min="0"
+          inputmode="decimal"
+        />
+        <span class="scale-unit">kg</span>
+      </div>
+      <button class="add-btn" onclick="addBag()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add
+      </button>
+    </div>
+
+    <div class="running-hint" id="runningHint" style="display:none">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Scale running total for <strong id="hintType">checked</strong>:
+      <strong id="hintTotal">0</strong> kg — enter new reading
+    </div>
+
+    <div id="overLimitAlert" style="display:none"></div>
+  </div>
+
+  <!-- Bag List -->
+  <div>
+    <div class="bag-list-header">
+      <span class="bag-list-title" id="bagCountLabel">Bags (0)</span>
+      <button class="clear-btn" onclick="clearAll()">Clear All</button>
+    </div>
+    <div class="bag-list" id="bagList">
+      <div class="empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+        <p>No bags added yet.<br>Enter a scale reading above.</p>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
