@@ -640,7 +640,15 @@ body {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
-
+.credit{
+      float: right;
+    font-size: 10px;
+    background-color: var(--accent);
+    padding: 3px 10px 5px 10px;
+    color: white;
+    font-weight: bold;
+    border-radius: 10px;
+}
 /* ─── Responsive ───────────────────────────────── */
 @media (max-width: 380px) {
   .limits-row { grid-template-columns: 1fr 1fr; }
