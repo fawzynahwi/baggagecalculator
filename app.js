@@ -72,13 +72,13 @@ function selectType(type) {
 
 function updateHint() {
   const hint = document.getElementById('runningHint');
-  const total = selectedType === 'checked' ? state.checkedTotal : state.cabinTotal;
+  const allTotal = state.checkedTotal + state.cabinTotal;
 
-  const typeBags = state.bags.filter(b => b.type === selectedType);
-  if (typeBags.length > 0) {
+  // Show hint when any bag exists (overall scale total is relevant)
+  if (state.bags.length > 0) {
     hint.style.display = 'flex';
-    document.getElementById('hintType').textContent = selectedType;
-    document.getElementById('hintTotal').textContent = total.toFixed(1);
+    document.getElementById('hintType').textContent = 'All bags';
+    document.getElementById('hintTotal').textContent = allTotal.toFixed(1);
   } else {
     hint.style.display = 'none';
   }
@@ -95,14 +95,16 @@ function addBag() {
     return;
   }
 
-  const prevTotal = selectedType === 'checked' ? state.checkedTotal : state.cabinTotal;
-  const bagWeight = reading - prevTotal;
+  // Use combined total of both checked and cabin bags as the previous scale reading
+  const prevTotalAll = state.checkedTotal + state.cabinTotal;
 
-  if (bagWeight <= 0) {
-    showToast('Reading must be greater than ' + prevTotal.toFixed(1) + ' kg');
+  if (reading <= prevTotalAll) {
+    showToast('Reading must be greater than ' + prevTotalAll.toFixed(1) + ' kg');
     input.focus();
     return;
   }
+
+  const bagWeight = Math.round((reading - prevTotalAll) * 10) / 10;
 
   // Determine overall bag number
   const bagNumber = state.bags.length + 1;
@@ -111,16 +113,17 @@ function addBag() {
     id: Date.now(),
     number: bagNumber,
     type: selectedType,
-    weight: Math.round(bagWeight * 10) / 10,
+    weight: bagWeight,
     reading: reading,
   };
 
   state.bags.push(bag);
 
+  // Increment the relevant type's total by the computed bag weight
   if (selectedType === 'checked') {
-    state.checkedTotal = reading;
+    state.checkedTotal += bagWeight;
   } else {
-    state.cabinTotal = reading;
+    state.cabinTotal += bagWeight;
   }
 
   saveState();
@@ -145,15 +148,13 @@ function deleteBag(id) {
   const idx = state.bags.findIndex(b => b.id === id);
   if (idx === -1) return;
 
-  const bag = state.bags[idx];
-
   // Recalculate running totals from scratch after removal
   state.bags.splice(idx, 1);
 
   // Re-number
   state.bags.forEach((b, i) => { b.number = i + 1; });
 
-  // Recalculate totals per type
+  // Recalculate totals per type (sums of weights)
   state.checkedTotal = 0;
   state.cabinTotal   = 0;
   state.bags.filter(b => b.type === 'checked').forEach(b => { state.checkedTotal += b.weight; });
