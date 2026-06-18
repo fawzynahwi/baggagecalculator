@@ -641,13 +641,13 @@ body {
   transform: translateX(-50%) translateY(0);
 }
 p.credit{
-      float: right;
-    font-size: 10px;
-    background-color: var(--accent);
-    padding: 3px 10px 5px 10px;
-    color: white;
-    font-weight: bold;
-    border-radius: 10px;
+      float: right !important;
+    font-size: 10px!important;
+    background-color: var(--accent)!important;
+    padding: 3px 10px 5px 10px!important;
+    color: white!important;
+    font-weight: bold!important;
+    border-radius: 10px!important;
 }
 /* ─── Responsive ───────────────────────────────── */
 @media (max-width: 380px) {
