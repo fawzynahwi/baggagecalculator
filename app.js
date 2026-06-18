@@ -72,13 +72,12 @@ function selectType(type) {
 
 function updateHint() {
   const hint = document.getElementById('runningHint');
-  
-  // FIXED: The running total on the scale is the combined grand total of all bags
-  const total = state.checkedTotal + state.cabinTotal;
+  const total = selectedType === 'checked' ? state.checkedTotal : state.cabinTotal;
 
-  if (state.bags.length > 0) {
+  const typeBags = state.bags.filter(b => b.type === selectedType);
+  if (typeBags.length > 0) {
     hint.style.display = 'flex';
-    document.getElementById('hintType').textContent = 'all bags';
+    document.getElementById('hintType').textContent = selectedType;
     document.getElementById('hintTotal').textContent = total.toFixed(1);
   } else {
     hint.style.display = 'none';
@@ -96,8 +95,7 @@ function addBag() {
     return;
   }
 
-  // FIXED: Subtract from the grand total of all bags currently on the scale
-  const prevTotal = state.checkedTotal + state.cabinTotal;
+  const prevTotal = selectedType === 'checked' ? state.checkedTotal : state.cabinTotal;
   const bagWeight = reading - prevTotal;
 
   if (bagWeight <= 0) {
@@ -119,12 +117,10 @@ function addBag() {
 
   state.bags.push(bag);
 
-  // FIXED: Increment the specific category by the individual bag's weight 
-  // instead of directly overwriting it with the raw cumulative scale reading
   if (selectedType === 'checked') {
-    state.checkedTotal = Math.round((state.checkedTotal + bagWeight) * 10) / 10;
+    state.checkedTotal = reading;
   } else {
-    state.cabinTotal = Math.round((state.cabinTotal + bagWeight) * 10) / 10;
+    state.cabinTotal = reading;
   }
 
   saveState();
