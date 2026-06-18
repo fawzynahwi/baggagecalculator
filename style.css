@@ -640,7 +640,7 @@ body {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
-.credit{
+p.credit{
       float: right;
     font-size: 10px;
     background-color: var(--accent);
