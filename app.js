@@ -1,4 +1,6 @@
-// ─── State ────────────────────────────────────────────
+
+
+
 const DEFAULTS = {
   checkedLimit: 25,
   cabinLimit: 7,
@@ -8,6 +10,7 @@ const DEFAULTS = {
   checkedTotal: 0,
   cabinTotal: 0,
   paxMode: 'single',
+  guestCount: 0,
 };
 
 let state = {};
@@ -21,7 +24,8 @@ function saveState() {
   localStorage.setItem('baggagecheck_state', JSON.stringify(state));
 }
 
-// ─── Theme ────────────────────────────────────────────
+
+
 function applyTheme() {
   const html = document.documentElement;
   html.setAttribute('data-theme', state.theme);
@@ -55,7 +59,9 @@ function cycleTheme() {
   showToast(labels[state.theme]);
 }
 
-// ─── Passenger Mode ──────────────────────────────────
+
+
+
 function setPaxMode(mode) {
   state.paxMode = mode;
 
@@ -75,7 +81,28 @@ function setPaxMode(mode) {
   showToast(mode === 'single' ? 'Single Pax: 25kg checked, 7kg cabin' : 'Pool Pax: 50kg checked, 14kg cabin');
 }
 
-// ─── Current selected bag type ────────────────────────
+
+
+function incrementGuest() {
+  state.guestCount += 1;
+  saveState();
+  updateGuestDisplay();
+}
+
+function resetGuest() {
+  state.guestCount = 0;
+  saveState();
+  updateGuestDisplay();
+  showToast('Guest counter reset to 0');
+}
+
+function updateGuestDisplay() {
+  document.getElementById('guestCountDisplay').textContent = state.guestCount;
+}
+
+
+
+
 let selectedType = 'checked';
 
 function selectType(type) {
@@ -100,7 +127,10 @@ function updateHint() {
   }
 }
 
-// ─── Add Bag ──────────────────────────────────────────
+
+
+
+
 function addBag() {
   const input = document.getElementById('scaleInput');
   const reading = parseFloat(input.value);
@@ -155,7 +185,9 @@ function addBag() {
   input.focus();
 }
 
-// ─── Delete Bag ───────────────────────────────────────
+
+
+
 function deleteBag(id) {
   const idx = state.bags.findIndex(b => b.id === id);
   if (idx === -1) return;
@@ -177,7 +209,10 @@ function deleteBag(id) {
   showToast('Bag removed');
 }
 
-// ─── Clear All ────────────────────────────────────────
+
+
+
+
 function clearAll() {
   if (state.bags.length === 0) return;
   if (!confirm('Clear all bags? This cannot be undone.')) return;
@@ -191,7 +226,10 @@ function clearAll() {
   showToast('All bags cleared');
 }
 
-// ─── Render Bag List ──────────────────────────────────
+
+
+
+
 function renderBags() {
   const list = document.getElementById('bagList');
   document.getElementById('bagCountLabel').textContent = `Bags (${state.bags.length})`;
@@ -222,7 +260,10 @@ function renderBags() {
   `).join('');
 }
 
-// ─── Render Limit Cards ───────────────────────────────
+
+
+
+
 function renderLimits() {
   const cl = state.checkedLimit;
   const ql = state.cabinLimit;
@@ -255,7 +296,10 @@ function renderLimits() {
   cabinBar.classList.toggle('over', qt > ql);
 }
 
-// ─── Toast ─────────────────────────────────────────────
+
+
+
+
 let toastTimer;
 
 function showToast(msg) {
@@ -266,7 +310,9 @@ function showToast(msg) {
   toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
 }
 
-// ─── Update Limit from main page ─────────────────────
+
+
+
 function updateLimit(type) {
   const id = type === 'checked' ? 'checkedLimitDisplay' : 'cabinLimitDisplay';
   const val = parseFloat(document.getElementById(id).value);
@@ -286,19 +332,75 @@ function updateLimit(type) {
   showToast(`${type === 'checked' ? 'Checked' : 'Cabin'} limit set to ${val} kg`);
 }
 
-// ─── Boot ──────────────────────────────────────────────
+
+
+
+
 document.addEventListener('DOMContentLoaded', () => {
   loadState();
   applyTheme();
   renderBags();
   renderLimits();
   updateHint();
+  updateGuestDisplay();
 
   if (state.paxMode === 'single' || state.paxMode === 'pool') {
     document.getElementById(state.paxMode + 'PaxBtn').classList.add('active');
   }
 
   document.getElementById('themeToggleBtn').addEventListener('click', cycleTheme);
+
+
+
+
+  const guestBtn = document.getElementById('guestIncrementBtn');
+  guestBtn.addEventListener('click', incrementGuest);
+
+
+
+  let pressTimer = null;
+  guestBtn.addEventListener('mousedown', () => {
+    pressTimer = setTimeout(() => {
+      resetGuest();
+      pressTimer = null;
+    }, 600);
+  });
+  guestBtn.addEventListener('mouseup', () => {
+    if (pressTimer) {
+      clearTimeout(pressTimer);
+      pressTimer = null;
+    }
+  });
+  guestBtn.addEventListener('mouseleave', () => {
+    if (pressTimer) {
+      clearTimeout(pressTimer);
+      pressTimer = null;
+    }
+  });
+
+
+
+  guestBtn.addEventListener('touchstart', (e) => {
+    pressTimer = setTimeout(() => {
+      resetGuest();
+      pressTimer = null;
+    }, 600);
+  });
+  guestBtn.addEventListener('touchend', () => {
+    if (pressTimer) {
+      clearTimeout(pressTimer);
+      pressTimer = null;
+    }
+  });
+  guestBtn.addEventListener('touchcancel', () => {
+    if (pressTimer) {
+      clearTimeout(pressTimer);
+      pressTimer = null;
+    }
+  });
+
+
+
 
   ['checked', 'cabin'].forEach(type => {
     const id = type === 'checked' ? 'checkedLimitDisplay' : 'cabinLimitDisplay';
