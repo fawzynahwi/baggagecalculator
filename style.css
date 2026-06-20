@@ -110,7 +110,6 @@ body {
   grid-template-columns: 1fr 1fr;
   gap: 12px;
   margin-bottom: 20px;
-  /* Prevent wrapping on any screen */
   min-width: 0;
 }
 
@@ -203,8 +202,8 @@ body {
   background: #ffc815;
 }
 
-/* ─── Pax Cards ─────────────────────────────────── */
-.pax-card {
+/* ─── Pax Buttons Card ─────────────────────────── */
+.pax-buttons-card {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -222,10 +221,16 @@ body {
   letter-spacing: 0.8px;
   text-transform: uppercase;
   color: var(--text-muted);
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
-.pax-card-btn {
+.pax-buttons-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pax-btn {
   width: 100%;
   padding: 10px 12px;
   border-radius: var(--radius-sm);
@@ -240,22 +245,79 @@ body {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  margin-top: 2px;
-  flex: 1; /* fill available height */
 }
 
-.pax-card-btn .pax-emoji {
+.pax-btn .pax-emoji {
   font-size: 18px;
 }
 
-.pax-card-btn:hover {
+.pax-btn:hover {
   background: var(--surface2);
 }
 
-.pax-card-btn.active {
+.pax-btn.active {
   border-color: var(--accent);
   color: var(--accent);
   background: var(--accent-dim);
+}
+
+/* ─── Guest Counter Card ───────────────────────── */
+.guest-counter-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+}
+
+.guest-counter-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+
+.guest-counter-number {
+  font-size: 34px;
+  font-weight: 800;
+  color: var(--accent);
+  line-height: 1.2;
+  margin: 2px 0;
+}
+
+.guest-counter-btn {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 8px 24px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity var(--transition), transform 0.1s;
+  margin-top: 4px;
+  width: 100%;
+  max-width: 120px;
+}
+.guest-counter-btn:hover {
+  opacity: 0.9;
+}
+.guest-counter-btn:active {
+  transform: scale(0.96);
+}
+
+.guest-hint {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 4px;
+  opacity: 0.6;
 }
 
 /* ─── Add Bag Panel ────────────────────────────────────── */
@@ -580,17 +642,6 @@ body {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
-
-/* ─── Footer ───────────────────────────────────────────── */
-.cred {
-  float: right;
-  font-size: 10px;
-  background-color: var(--accent);
-  padding: 3px 10px 5px 10px;
-  color: #fff;
-  font-weight: bold;
-  border-radius: 10px;
-}
 /* ─── Settings Page ────────────────────────────── */
 .settings-section { margin-bottom: 24px; }
 .settings-section-title {
@@ -772,6 +823,19 @@ body {
 }
 .save-btn:hover { opacity: 0.9; }
 
+
+
+/* ─── Footer ───────────────────────────────────────────── */
+.cred {
+  float: right;
+  font-size: 10px;
+  background-color: var(--accent);
+  padding: 3px 10px 5px 10px;
+  color: #fff;
+  font-weight: bold;
+  border-radius: 10px;
+}
+
 /* ─── Responsive – keep grid, allow horizontal scroll ── */
 @media (max-width: 500px) {
   .page {
@@ -780,14 +844,21 @@ body {
   .cards-grid {
     gap: 8px;
   }
-  .limit-card, .pax-card {
+  .limit-card, .pax-buttons-card, .guest-counter-card {
     padding: 10px 12px;
   }
   .limit-edit-input {
     font-size: 20px;
   }
-  .pax-card-btn {
+  .pax-btn {
     font-size: 12px;
     padding: 8px;
+  }
+  .guest-counter-number {
+    font-size: 28px;
+  }
+  .guest-counter-btn {
+    font-size: 16px;
+    padding: 6px 16px;
   }
 }
