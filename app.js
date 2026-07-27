@@ -190,7 +190,6 @@ function deleteBag(id) {
 
 function clearAll() {
   if (state.bags.length === 0) return;
-  if (!confirm('Clear all bags? This cannot be undone.')) return;
   state.bags = [];
   state.checkedTotal = 0;
   state.cabinTotal = 0;
@@ -344,7 +343,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.querySelector('.add-btn').addEventListener('click', addBag);
 
-  // ─── HOLD TO CLEAR ALL ───────────────────────────────────
+  // ─── HOLD TO CLEAR ALL (no popup) ──────────────────────
   const clearBtn = document.getElementById('clearAllBtn');
   let holdTimer = null;
   let isHeld = false;
@@ -378,7 +377,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Touch events
   clearBtn.addEventListener('touchstart', function(e) {
-    e.preventDefault(); // Prevent default touch behavior
+    e.preventDefault();
     startHold();
   }, { passive: false });
   clearBtn.addEventListener('touchend', function(e) {
