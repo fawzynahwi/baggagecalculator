@@ -343,4 +343,47 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   document.querySelector('.add-btn').addEventListener('click', addBag);
+
+  // ─── HOLD TO CLEAR ALL ───────────────────────────────────
+  const clearBtn = document.getElementById('clearAllBtn');
+  let holdTimer = null;
+  let isHeld = false;
+
+  function startHold() {
+    isHeld = true;
+    clearBtn.classList.add('pressed');
+    holdTimer = setTimeout(() => {
+      if (isHeld) {
+        clearAll();
+        clearBtn.classList.remove('pressed');
+        isHeld = false;
+      }
+      holdTimer = null;
+    }, 600);
+  }
+
+  function cancelHold() {
+    isHeld = false;
+    if (holdTimer) {
+      clearTimeout(holdTimer);
+      holdTimer = null;
+    }
+    clearBtn.classList.remove('pressed');
+  }
+
+  // Mouse events
+  clearBtn.addEventListener('mousedown', startHold);
+  clearBtn.addEventListener('mouseup', cancelHold);
+  clearBtn.addEventListener('mouseleave', cancelHold);
+
+  // Touch events
+  clearBtn.addEventListener('touchstart', function(e) {
+    e.preventDefault(); // Prevent default touch behavior
+    startHold();
+  }, { passive: false });
+  clearBtn.addEventListener('touchend', function(e) {
+    e.preventDefault();
+    cancelHold();
+  }, { passive: false });
+  clearBtn.addEventListener('touchcancel', cancelHold);
 });
