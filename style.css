@@ -130,7 +130,7 @@ body {
 }
 
 .status-label {
-  font-size: 11px;
+  font-size: 15px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -138,7 +138,7 @@ body {
 }
 
 .status-numbers {
-  font-size: 12px;
+  font-size: 15px;
   font-weight: 700;
   color: var(--text);
   white-space: nowrap;
@@ -153,7 +153,7 @@ body {
   border: none;
   border-bottom: 1.5px dashed var(--border);
   background: transparent;
-  font-size: 12px;
+  font-size: 15px;
   font-weight: 700;
   color: var(--accent);
   text-align: center;
