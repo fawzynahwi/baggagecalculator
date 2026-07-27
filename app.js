@@ -96,7 +96,8 @@ function resetGuest() {
 }
 
 function updateGuestDisplay() {
-  document.getElementById('guestCountDisplay').textContent = state.guestCount;
+  const el = document.getElementById('guestCountDisplay');
+  if (el) el.textContent = state.guestCount;
 }
 
 
@@ -137,8 +138,12 @@ function updateHint() {
 
   if (state.bags.length > 0) {
     hint.style.display = 'flex';
-    document.getElementById('hintType').textContent = 'All bags';
-    document.getElementById('hintTotal').textContent = allTotal.toFixed(1);
+    const hintText = document.getElementById('hintText');
+    if (hintText) {
+      hintText.innerHTML = `Scale running total for <strong>All bags</strong>: <strong id="hintTotal">${allTotal.toFixed(1)}</strong> kg — enter new reading`;
+    }
+    const hintTotal = document.getElementById('hintTotal');
+    if (hintTotal) hintTotal.textContent = allTotal.toFixed(1);
   } else {
     hint.style.display = 'none';
   }
@@ -255,7 +260,8 @@ function clearAll() {
 
 function renderBags() {
   const list = document.getElementById('bagList');
-  document.getElementById('bagCountLabel').textContent = `Bags (${state.bags.length})`;
+  const label = document.getElementById('bagCountLabel');
+  if (label) label.textContent = `Bags (${state.bags.length})`;
 
   if (state.bags.length === 0) {
     list.innerHTML = `
@@ -369,66 +375,25 @@ document.addEventListener('DOMContentLoaded', () => {
   updateGuestDisplay();
 
   if (state.paxMode === 'single' || state.paxMode === 'pool') {
-    document.getElementById(state.paxMode + 'PaxBtn').classList.add('active');
+    const btn = document.getElementById(state.paxMode + 'PaxBtn');
+    if (btn) btn.classList.add('active');
   }
 
   // Set initial input mode UI
   if (state.inputMode === 'scale' || state.inputMode === 'single') {
-    document.getElementById(state.inputMode + 'ModeBtn').classList.add('active');
+    const btn = document.getElementById(state.inputMode + 'ModeBtn');
+    if (btn) btn.classList.add('active');
     const hint = document.getElementById('modeHint');
-    if (state.inputMode === 'scale') {
-      hint.textContent = 'Enter cumulative scale reading';
-    } else {
-      hint.textContent = 'Enter individual bag weight';
+    if (hint) {
+      hint.textContent = state.inputMode === 'scale' ? 'Enter cumulative scale reading' : 'Enter individual bag weight';
     }
   } else {
     state.inputMode = 'scale';
-    document.getElementById('scaleModeBtn').classList.add('active');
+    const btn = document.getElementById('scaleModeBtn');
+    if (btn) btn.classList.add('active');
   }
 
   document.getElementById('themeToggleBtn').addEventListener('click', cycleTheme);
-
-  const guestBtn = document.getElementById('guestIncrementBtn');
-  guestBtn.addEventListener('click', incrementGuest);
-
-  let pressTimer = null;
-  guestBtn.addEventListener('mousedown', () => {
-    pressTimer = setTimeout(() => {
-      resetGuest();
-      pressTimer = null;
-    }, 600);
-  });
-  guestBtn.addEventListener('mouseup', () => {
-    if (pressTimer) {
-      clearTimeout(pressTimer);
-      pressTimer = null;
-    }
-  });
-  guestBtn.addEventListener('mouseleave', () => {
-    if (pressTimer) {
-      clearTimeout(pressTimer);
-      pressTimer = null;
-    }
-  });
-
-  guestBtn.addEventListener('touchstart', (e) => {
-    pressTimer = setTimeout(() => {
-      resetGuest();
-      pressTimer = null;
-    }, 600);
-  });
-  guestBtn.addEventListener('touchend', () => {
-    if (pressTimer) {
-      clearTimeout(pressTimer);
-      pressTimer = null;
-    }
-  });
-  guestBtn.addEventListener('touchcancel', () => {
-    if (pressTimer) {
-      clearTimeout(pressTimer);
-      pressTimer = null;
-    }
-  });
 
   ['checked', 'cabin'].forEach(type => {
     const id = type === 'checked' ? 'checkedLimitDisplay' : 'cabinLimitDisplay';
