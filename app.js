@@ -9,7 +9,12 @@ const DEFAULTS = {
   paxMode: 'single',
   inputMode: 'scale',
 };
-
+function toggleSettings() {
+  const panel = document.getElementById('settingsPanel');
+  const arrow = document.getElementById('settingsArrow');
+  panel.classList.toggle('open');
+  arrow.textContent = panel.classList.contains('open') ? '▲' : '▼';
+}
 let state = {};
 
 function loadState() {
