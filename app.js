@@ -137,9 +137,7 @@ function updateHint() {
 
   if (state.bags.length > 0) {
     hint.style.display = 'flex';
-    const hintText = document.getElementById('hintText');
-    hintText.innerHTML = `Scale running total for <strong>All bags</strong>: <strong id="hintTotal">${allTotal.toFixed(1)}</strong> kg — enter new reading`;
-    // keep the hintTotal element updated
+    document.getElementById('hintType').textContent = 'All bags';
     document.getElementById('hintTotal').textContent = allTotal.toFixed(1);
   } else {
     hint.style.display = 'none';
