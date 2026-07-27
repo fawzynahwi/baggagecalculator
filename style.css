@@ -261,64 +261,6 @@ body {
   background: var(--accent-dim);
 }
 
-/* ─── Guest Counter Card ───────────────────────── */
-.guest-counter-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 14px 16px;
-  box-shadow: var(--shadow);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 0;
-}
-
-.guest-counter-label {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  margin-bottom: 2px;
-}
-
-.guest-counter-number {
-  font-size: 34px;
-  font-weight: 800;
-  color: var(--accent);
-  line-height: 1.2;
-  margin: 2px 0;
-}
-
-.guest-counter-btn {
-  background: var(--accent);
-  color: #fff;
-  border: none;
-  border-radius: var(--radius-sm);
-  padding: 8px 24px;
-  font-size: 18px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: opacity var(--transition), transform 0.1s;
-  margin-top: 4px;
-  width: 100%;
-  max-width: 120px;
-}
-.guest-counter-btn:hover {
-  opacity: 0.9;
-}
-.guest-counter-btn:active {
-  transform: scale(0.96);
-}
-
-.guest-hint {
-  font-size: 10px;
-  color: var(--text-muted);
-  margin-top: 4px;
-  opacity: 0.6;
-}
 /* ─── Mode Selector Card ────────────────────────── */
 .mode-selector-card {
   background: var(--surface);
@@ -387,6 +329,7 @@ body {
   opacity: 0.7;
   text-align: center;
 }
+
 /* ─── Add Bag Panel ────────────────────────────────────── */
 .panel {
   background: var(--surface);
@@ -911,7 +854,7 @@ body {
   .cards-grid {
     gap: 8px;
   }
-  .limit-card, .pax-buttons-card, .guest-counter-card {
+  .limit-card, .pax-buttons-card, .mode-selector-card {
     padding: 10px 12px;
   }
   .limit-edit-input {
@@ -921,21 +864,11 @@ body {
     font-size: 12px;
     padding: 8px;
   }
-  .guest-counter-number {
-    font-size: 28px;
+  .mode-btn {
+    font-size: 12px;
+    padding: 8px;
   }
-  .guest-counter-btn {
-    font-size: 16px;
-    padding: 6px 16px;
+  .mode-hint {
+    font-size: 10px;
   }
-  .mode-selector-card {
-  padding: 10px 12px;
-}
-.mode-btn {
-  font-size: 12px;
-  padding: 8px;
-}
-.mode-hint {
-  font-size: 10px;
-}
 }
