@@ -9,12 +9,7 @@ const DEFAULTS = {
   paxMode: 'single',
   inputMode: 'scale',
 };
-function toggleSettings() {
-  const panel = document.getElementById('settingsPanel');
-  const arrow = document.getElementById('settingsArrow');
-  panel.classList.toggle('open');
-  arrow.textContent = panel.classList.contains('open') ? '▲' : '▼';
-}
+
 let state = {};
 
 function loadState() {
@@ -25,8 +20,6 @@ function loadState() {
 function saveState() {
   localStorage.setItem('baggagecheck_state', JSON.stringify(state));
 }
-
-
 
 function applyTheme() {
   const html = document.documentElement;
@@ -61,13 +54,8 @@ function cycleTheme() {
   showToast(labels[state.theme]);
 }
 
-
-
-
-
 function setPaxMode(mode) {
   state.paxMode = mode;
-
   document.getElementById('singlePaxBtn').classList.toggle('active', mode === 'single');
   document.getElementById('poolPaxBtn').classList.toggle('active', mode === 'pool');
 
@@ -78,17 +66,13 @@ function setPaxMode(mode) {
     state.checkedLimit = 50;
     state.cabinLimit = 14;
   }
-
   saveState();
   renderLimits();
   showToast(mode === 'single' ? 'Single Pax: 25kg checked, 7kg cabin' : 'Pool Pax: 50kg checked, 14kg cabin');
 }
 
-
-
 function setInputMode(mode) {
   state.inputMode = mode;
-
   document.getElementById('scaleModeBtn').classList.toggle('active', mode === 'scale');
   document.getElementById('singleModeBtn').classList.toggle('active', mode === 'single');
 
@@ -98,12 +82,9 @@ function setInputMode(mode) {
   } else {
     hint.textContent = 'Enter individual bag weight';
   }
-
   saveState();
   document.getElementById('scaleInput').focus();
 }
-
-
 
 let selectedType = 'checked';
 
@@ -124,7 +105,7 @@ function updateHint() {
     hint.style.display = 'flex';
     const hintText = document.getElementById('hintText');
     if (hintText) {
-      hintText.innerHTML = `Scale running total for <strong>All bags</strong>: <strong id="hintTotal">${allTotal.toFixed(1)}</strong> kg — enter new reading`;
+      hintText.innerHTML = `Running total: <strong id="hintTotal">${allTotal.toFixed(1)}</strong> kg`;
     }
     const hintTotal = document.getElementById('hintTotal');
     if (hintTotal) hintTotal.textContent = allTotal.toFixed(1);
@@ -132,10 +113,6 @@ function updateHint() {
     hint.style.display = 'none';
   }
 }
-
-
-
-
 
 function addBag() {
   const input = document.getElementById('scaleInput');
@@ -196,10 +173,6 @@ function addBag() {
   input.focus();
 }
 
-
-
-
-
 function deleteBag(id) {
   const idx = state.bags.findIndex(b => b.id === id);
   if (idx === -1) return;
@@ -221,10 +194,6 @@ function deleteBag(id) {
   showToast('Bag removed');
 }
 
-
-
-
-
 function clearAll() {
   if (state.bags.length === 0) return;
   if (!confirm('Clear all bags? This cannot be undone.')) return;
@@ -238,10 +207,6 @@ function clearAll() {
   showToast('All bags cleared');
 }
 
-
-
-
-
 function renderBags() {
   const list = document.getElementById('bagList');
   const label = document.getElementById('bagCountLabel');
@@ -251,7 +216,7 @@ function renderBags() {
     list.innerHTML = `
       <div class="empty-state">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
-        <p>No bags added yet.<br>Enter a scale reading above.</p>
+        <p>No bags added yet.<br>Enter a weight above.</p>
       </div>`;
     return;
   }
@@ -273,29 +238,40 @@ function renderBags() {
   `).join('');
 }
 
-
-
-
-
 function renderLimits() {
   const cl = state.checkedLimit;
   const ql = state.cabinLimit;
   const ct = state.checkedTotal;
   const qt = state.cabinTotal;
 
+  // Update displayed limits
   document.getElementById('checkedLimitDisplay').value = cl;
   document.getElementById('cabinLimitDisplay').value = ql;
 
-  document.getElementById('checkedUsed').textContent = `${ct.toFixed(1)} kg used`;
-  document.getElementById('checkedRemain').textContent = ct > cl ?
-    `${(ct - cl).toFixed(1)} kg over!` :
-    `${(cl - ct).toFixed(1)} kg left`;
+  // Update used numbers in status bar
+  document.getElementById('checkedUsed').textContent = ct.toFixed(1);
+  document.getElementById('cabinUsed').textContent = qt.toFixed(1);
 
-  document.getElementById('cabinUsed').textContent = `${qt.toFixed(1)} kg used`;
-  document.getElementById('cabinRemain').textContent = qt > ql ?
-    `${(qt - ql).toFixed(1)} kg over!` :
-    `${(ql - qt).toFixed(1)} kg left`;
+  // Update remain texts
+  const checkedRemainEl = document.getElementById('checkedRemain');
+  if (ct > cl) {
+    checkedRemainEl.textContent = `${(ct - cl).toFixed(1)} kg over!`;
+    checkedRemainEl.classList.add('over');
+  } else {
+    checkedRemainEl.textContent = `${(cl - ct).toFixed(1)} kg left`;
+    checkedRemainEl.classList.remove('over');
+  }
 
+  const cabinRemainEl = document.getElementById('cabinRemain');
+  if (qt > ql) {
+    cabinRemainEl.textContent = `${(qt - ql).toFixed(1)} kg over!`;
+    cabinRemainEl.classList.add('over');
+  } else {
+    cabinRemainEl.textContent = `${(ql - qt).toFixed(1)} kg left`;
+    cabinRemainEl.classList.remove('over');
+  }
+
+  // Update progress bars
   const checkedPct = Math.min((ct / cl) * 100, 100);
   const cabinPct = Math.min((qt / ql) * 100, 100);
 
@@ -309,10 +285,6 @@ function renderLimits() {
   cabinBar.classList.toggle('over', qt > ql);
 }
 
-
-
-
-
 let toastTimer;
 
 function showToast(msg) {
@@ -322,10 +294,6 @@ function showToast(msg) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
 }
-
-
-
-
 
 function updateLimit(type) {
   const id = type === 'checked' ? 'checkedLimitDisplay' : 'cabinLimitDisplay';
@@ -346,9 +314,13 @@ function updateLimit(type) {
   showToast(`${type === 'checked' ? 'Checked' : 'Cabin'} limit set to ${val} kg`);
 }
 
-
-
-
+// Toggle settings panel
+function toggleSettings() {
+  const panel = document.getElementById('settingsPanel');
+  const arrow = document.getElementById('settingsArrow');
+  panel.classList.toggle('open');
+  arrow.textContent = panel.classList.contains('open') ? '▲' : '▼';
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   loadState();
@@ -357,12 +329,13 @@ document.addEventListener('DOMContentLoaded', () => {
   renderLimits();
   updateHint();
 
+  // Restore pax mode
   if (state.paxMode === 'single' || state.paxMode === 'pool') {
     const btn = document.getElementById(state.paxMode + 'PaxBtn');
     if (btn) btn.classList.add('active');
   }
 
-  // Set initial input mode UI
+  // Restore input mode
   if (state.inputMode === 'scale' || state.inputMode === 'single') {
     const btn = document.getElementById(state.inputMode + 'ModeBtn');
     if (btn) btn.classList.add('active');
@@ -376,8 +349,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btn) btn.classList.add('active');
   }
 
+  // Theme toggle
   document.getElementById('themeToggleBtn').addEventListener('click', cycleTheme);
 
+  // Limit inputs
   ['checked', 'cabin'].forEach(type => {
     const id = type === 'checked' ? 'checkedLimitDisplay' : 'cabinLimitDisplay';
     const input = document.getElementById(id);
@@ -385,15 +360,15 @@ document.addEventListener('DOMContentLoaded', () => {
     input.addEventListener('keydown', e => { if (e.key === 'Enter') { updateLimit(type); input.blur(); } });
   });
 
-  // ENTER key support for adding bags
+  // Enter key for adding bags
   const scaleInput = document.getElementById('scaleInput');
   scaleInput.addEventListener('keydown', function(e) {
     if (e.key === 'Enter') {
-      e.preventDefault(); // Prevent any default form submission
+      e.preventDefault();
       addBag();
     }
   });
 
-  // Also ensure the add button works
+  // Add button click
   document.querySelector('.add-btn').addEventListener('click', addBag);
 });
