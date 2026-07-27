@@ -7,7 +7,6 @@ const DEFAULTS = {
   checkedTotal: 0,
   cabinTotal: 0,
   paxMode: 'single',
-  guestCount: 0,
   inputMode: 'scale',
 };
 
@@ -78,26 +77,6 @@ function setPaxMode(mode) {
   saveState();
   renderLimits();
   showToast(mode === 'single' ? 'Single Pax: 25kg checked, 7kg cabin' : 'Pool Pax: 50kg checked, 14kg cabin');
-}
-
-
-
-function incrementGuest() {
-  state.guestCount += 1;
-  saveState();
-  updateGuestDisplay();
-}
-
-function resetGuest() {
-  state.guestCount = 0;
-  saveState();
-  updateGuestDisplay();
-  showToast('Guest counter reset to 0');
-}
-
-function updateGuestDisplay() {
-  const el = document.getElementById('guestCountDisplay');
-  if (el) el.textContent = state.guestCount;
 }
 
 
@@ -372,7 +351,6 @@ document.addEventListener('DOMContentLoaded', () => {
   renderBags();
   renderLimits();
   updateHint();
-  updateGuestDisplay();
 
   if (state.paxMode === 'single' || state.paxMode === 'pool') {
     const btn = document.getElementById(state.paxMode + 'PaxBtn');
@@ -402,7 +380,15 @@ document.addEventListener('DOMContentLoaded', () => {
     input.addEventListener('keydown', e => { if (e.key === 'Enter') { updateLimit(type); input.blur(); } });
   });
 
-  document.getElementById('scaleInput').addEventListener('keydown', e => {
-    if (e.key === 'Enter') addBag();
+  // ENTER key support for adding bags
+  const scaleInput = document.getElementById('scaleInput');
+  scaleInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault(); // Prevent any default form submission
+      addBag();
+    }
   });
+
+  // Also ensure the add button works
+  document.querySelector('.add-btn').addEventListener('click', addBag);
 });
