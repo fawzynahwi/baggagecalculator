@@ -34,34 +34,28 @@
         <div class="status-bar">
             <!-- Checked -->
             <div class="status-item checked-status">
-                <div class="status-top">
-                    <span class="status-label">Checked</span>
-                    <span class="status-numbers">
-                        <span id="checkedUsed">0.0</span> / 
-                        <input type="number" class="status-limit-input" id="checkedLimitDisplay" value="25" min="1" max="200" step="0.5" />
-                        kg
-                    </span>
+                <div class="status-remain" id="checkedRemain">25.0 kg left</div>
+                <div class="status-numbers">
+                    <span id="checkedUsed">0.0</span> / 
+                    <input type="number" class="status-limit-input" id="checkedLimitDisplay" value="25" min="1" max="200" step="0.5" />
+                    kg
                 </div>
                 <div class="status-bar-bg">
                     <div class="status-bar-fill" id="checkedBar" style="width:0%"></div>
                 </div>
-                <div class="status-remain" id="checkedRemain">25.0 kg left</div>
             </div>
 
             <!-- Cabin -->
             <div class="status-item cabin-status">
-                <div class="status-top">
-                    <span class="status-label">Cabin</span>
-                    <span class="status-numbers">
-                        <span id="cabinUsed">0.0</span> / 
-                        <input type="number" class="status-limit-input" id="cabinLimitDisplay" value="7" min="1" max="100" step="0.5" />
-                        kg
-                    </span>
+                <div class="status-remain" id="cabinRemain">7.0 kg left</div>
+                <div class="status-numbers">
+                    <span id="cabinUsed">0.0</span> / 
+                    <input type="number" class="status-limit-input" id="cabinLimitDisplay" value="7" min="1" max="100" step="0.5" />
+                    kg
                 </div>
                 <div class="status-bar-bg">
                     <div class="status-bar-fill" id="cabinBar" style="width:0%"></div>
                 </div>
-                <div class="status-remain" id="cabinRemain">7.0 kg left</div>
             </div>
         </div>
 
@@ -101,7 +95,7 @@
         <div class="bag-section">
             <div class="bag-list-header">
                 <span class="bag-list-title" id="bagCountLabel">Bags (0)</span>
-                <button class="clear-btn" onclick="clearAll()">Clear All</button>
+                <button class="clear-btn" id="clearAllBtn">Clear All</button>
             </div>
             <div class="bag-list" id="bagList">
                 <div class="empty-state">
