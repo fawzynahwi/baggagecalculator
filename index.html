@@ -63,17 +63,15 @@
             </div>
         </div>
 
-        <!-- ─── MODE GRID (3×2) ────────────────────────────── -->
+        <!-- ─── MODE GRID (2×2) ────────────────────────────── -->
         <div class="mode-grid">
             <!-- Row 1 -->
-            <button class="mode-grid-btn" id="singleModeBtn" onclick="setInputMode('single')">📦 Single</button>
-            <button class="mode-grid-btn active" id="scaleModeBtn" onclick="setInputMode('scale')">📊 Scale</button>
-            <button class="mode-grid-btn active" id="singlePaxBtn" onclick="setPaxMode('single')">👤 Single Pax</button>
+            <button class="mode-grid-btn active" id="inputToggleBtn" title="Single press: toggle. Long press: switch mode">📊 Scale</button>
+            <button class="mode-grid-btn active" id="paxToggleBtn" title="Single press: toggle. Long press: switch mode">👤 Single Pax</button>
 
             <!-- Row 2 -->
             <button class="mode-grid-btn active" id="tabChecked" onclick="selectType('checked')">✈ Checked</button>
             <button class="mode-grid-btn" id="tabCabin" onclick="selectType('cabin')">🎒 Cabin</button>
-            <button class="mode-grid-btn" id="poolPaxBtn" onclick="setPaxMode('pool')">👥 Pool Pax</button>
         </div>
 
         <!-- ─── QUICK ENTRY ─────────────────────────────────── -->
