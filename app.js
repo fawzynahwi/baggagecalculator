@@ -244,15 +244,12 @@ function renderLimits() {
   const ct = state.checkedTotal;
   const qt = state.cabinTotal;
 
-  // Update displayed limits
   document.getElementById('checkedLimitDisplay').value = cl;
   document.getElementById('cabinLimitDisplay').value = ql;
 
-  // Update used numbers in status bar
   document.getElementById('checkedUsed').textContent = ct.toFixed(1);
   document.getElementById('cabinUsed').textContent = qt.toFixed(1);
 
-  // Update remain texts
   const checkedRemainEl = document.getElementById('checkedRemain');
   if (ct > cl) {
     checkedRemainEl.textContent = `${(ct - cl).toFixed(1)} kg over!`;
@@ -271,7 +268,6 @@ function renderLimits() {
     cabinRemainEl.classList.remove('over');
   }
 
-  // Update progress bars
   const checkedPct = Math.min((ct / cl) * 100, 100);
   const cabinPct = Math.min((qt / ql) * 100, 100);
 
@@ -314,7 +310,6 @@ function updateLimit(type) {
   showToast(`${type === 'checked' ? 'Checked' : 'Cabin'} limit set to ${val} kg`);
 }
 
-// Toggle settings panel
 function toggleSettings() {
   const panel = document.getElementById('settingsPanel');
   const arrow = document.getElementById('settingsArrow');
@@ -329,13 +324,11 @@ document.addEventListener('DOMContentLoaded', () => {
   renderLimits();
   updateHint();
 
-  // Restore pax mode
   if (state.paxMode === 'single' || state.paxMode === 'pool') {
     const btn = document.getElementById(state.paxMode + 'PaxBtn');
     if (btn) btn.classList.add('active');
   }
 
-  // Restore input mode
   if (state.inputMode === 'scale' || state.inputMode === 'single') {
     const btn = document.getElementById(state.inputMode + 'ModeBtn');
     if (btn) btn.classList.add('active');
@@ -349,10 +342,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btn) btn.classList.add('active');
   }
 
-  // Theme toggle
   document.getElementById('themeToggleBtn').addEventListener('click', cycleTheme);
 
-  // Limit inputs
   ['checked', 'cabin'].forEach(type => {
     const id = type === 'checked' ? 'checkedLimitDisplay' : 'cabinLimitDisplay';
     const input = document.getElementById(id);
@@ -360,7 +351,6 @@ document.addEventListener('DOMContentLoaded', () => {
     input.addEventListener('keydown', e => { if (e.key === 'Enter') { updateLimit(type); input.blur(); } });
   });
 
-  // Enter key for adding bags
   const scaleInput = document.getElementById('scaleInput');
   scaleInput.addEventListener('keydown', function(e) {
     if (e.key === 'Enter') {
@@ -369,6 +359,77 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Add button click
   document.querySelector('.add-btn').addEventListener('click', addBag);
+
+  // ─── SWIPE TO REVEAL SETTINGS ──────────────────────────
+  const entryPanel = document.querySelector('.entry-panel');
+  let startX = 0;
+  let startY = 0;
+  let isSwiping = false;
+
+  function handleSwipeStart(e) {
+    const target = e.target;
+    // Ignore swipes on inputs, buttons, and their children
+    if (target.tagName === 'INPUT' || target.tagName === 'BUTTON' || target.closest('button') || target.closest('input')) {
+      return;
+    }
+    const touch = e.touches ? e.touches[0] : e;
+    startX = touch.clientX;
+    startY = touch.clientY;
+    isSwiping = false;
+  }
+
+  function handleSwipeMove(e) {
+    if (startX === 0) return;
+    const touch = e.touches ? e.touches[0] : e;
+    const deltaX = touch.clientX - startX;
+    const deltaY = touch.clientY - startY;
+
+    // Detect horizontal swipe and prevent scroll
+    if (Math.abs(deltaX) > 10 && Math.abs(deltaX) > Math.abs(deltaY)) {
+      e.preventDefault();
+      isSwiping = true;
+    }
+  }
+
+  function handleSwipeEnd(e) {
+    if (!isSwiping || startX === 0) {
+      startX = 0;
+      return;
+    }
+    const touch = e.changedTouches ? e.changedTouches[0] : e;
+    const deltaX = touch.clientX - startX;
+
+    const panel = document.getElementById('settingsPanel');
+    const arrow = document.getElementById('settingsArrow');
+
+    if (deltaX > 50) {
+      // Swipe Right → Open Settings
+      if (!panel.classList.contains('open')) {
+        panel.classList.add('open');
+        arrow.textContent = '▲';
+      }
+    } else if (deltaX < -50) {
+      // Swipe Left → Close Settings
+      if (panel.classList.contains('open')) {
+        panel.classList.remove('open');
+        arrow.textContent = '▼';
+      }
+    }
+    startX = 0;
+    isSwiping = false;
+  }
+
+  if (entryPanel) {
+    // Touch events (mobile)
+    entryPanel.addEventListener('touchstart', handleSwipeStart, { passive: false });
+    entryPanel.addEventListener('touchmove', handleSwipeMove, { passive: false });
+    entryPanel.addEventListener('touchend', handleSwipeEnd, { passive: false });
+
+    // Mouse events (desktop testing)
+    entryPanel.addEventListener('mousedown', handleSwipeStart);
+    entryPanel.addEventListener('mousemove', handleSwipeMove);
+    entryPanel.addEventListener('mouseup', handleSwipeEnd);
+    entryPanel.addEventListener('dragstart', (e) => e.preventDefault());
+  }
 });
