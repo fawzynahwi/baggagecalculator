@@ -30,81 +30,36 @@
 
     <main class="page">
 
-        <!-- ─── 2×2 Grid of Cards ─────────────────────────── -->
-        <div class="cards-grid">
-
-            <!-- Checked Limit Card -->
-            <div class="limit-card">
-                <div class="limit-card-label">Limit</div>
-                <div class="limit-card-type">Checked</div>
-                <div style="display:flex;align-items:baseline;gap:2px">
-                    <input type="number" class="limit-edit-input" id="checkedLimitDisplay" value="25" min="1" max="200" step="0.5" title="Tap to edit limit" />
-                    <span class="limit-card-unit">kg</span>
-                </div>
-                <div class="progress-wrap">
-                    <div class="progress-label">
-                        <span id="checkedUsed">0 kg used</span>
-                        <span id="checkedRemain">25 kg left</span>
+        <!-- ─── STATUS BAR ─────────────────────────────────── -->
+        <div class="status-bar">
+            <div class="status-item checked-status">
+                <div class="status-label">Checked</div>
+                <div class="status-progress">
+                    <div class="status-bar-bg">
+                        <div class="status-bar-fill" id="checkedBar" style="width:0%"></div>
                     </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="checkedBar" style="width:0%"></div>
+                    <span class="status-numbers">
+                        <span id="checkedUsed">0.0</span> / <span id="checkedLimitDisplay">25</span> kg
+                    </span>
+                </div>
+                <div class="status-remain" id="checkedRemain">25.0 kg left</div>
+            </div>
+            <div class="status-item cabin-status">
+                <div class="status-label">Cabin</div>
+                <div class="status-progress">
+                    <div class="status-bar-bg">
+                        <div class="status-bar-fill" id="cabinBar" style="width:0%"></div>
                     </div>
+                    <span class="status-numbers">
+                        <span id="cabinUsed">0.0</span> / <span id="cabinLimitDisplay">7</span> kg
+                    </span>
                 </div>
+                <div class="status-remain" id="cabinRemain">7.0 kg left</div>
             </div>
-
-            <!-- ─── Right Column Top: Passenger Mode Buttons ─── -->
-            <div class="pax-buttons-card">
-                <div class="pax-card-label">Passenger Mode</div>
-                <div class="pax-buttons-stack">
-                    <button class="pax-btn active" id="singlePaxBtn" onclick="setPaxMode('single')">
-                        <span class="pax-emoji">👤</span> Single Pax
-                    </button>
-                    <button class="pax-btn" id="poolPaxBtn" onclick="setPaxMode('pool')">
-                        <span class="pax-emoji">👥</span> Pool Pax
-                    </button>
-                </div>
-            </div>
-
-            <!-- Cabin Limit Card -->
-            <div class="limit-card">
-                <div class="limit-card-label">Limit</div>
-                <div class="limit-card-type">Cabin</div>
-                <div style="display:flex;align-items:baseline;gap:2px">
-                    <input type="number" class="limit-edit-input" id="cabinLimitDisplay" value="7" min="1" max="100" step="0.5" title="Tap to edit limit" />
-                    <span class="limit-card-unit">kg</span>
-                </div>
-                <div class="progress-wrap">
-                    <div class="progress-label">
-                        <span id="cabinUsed">0 kg used</span>
-                        <span id="cabinRemain">7 kg left</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="cabinBar" style="width:0%"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ─── Right Column Bottom: Mode Selector ──────── -->
-            <div class="mode-selector-card">
-                <div class="mode-selector-label">Input Mode</div>
-                <div class="mode-selector-stack">
-                    <button class="mode-btn active" id="scaleModeBtn" onclick="setInputMode('scale')">
-                        <span class="mode-emoji">📊</span> Scale Mode
-                    </button>
-                    <button class="mode-btn" id="singleModeBtn" onclick="setInputMode('single')">
-                        <span class="mode-emoji">📦</span> Single Mode
-                    </button>
-                </div>
-                <div class="mode-hint" id="modeHint">Enter cumulative scale reading</div>
-            </div>
-
         </div>
-        <!-- ─── END GRID ─── -->
 
-        <!-- Add Bag Panel -->
-        <div class="panel">
-            <div class="panel-title">Add Bag</div>
-
+        <!-- ─── QUICK ENTRY ─────────────────────────────────── -->
+        <div class="entry-panel">
             <div class="type-tabs">
                 <button class="type-tab active" id="tabChecked" onclick="selectType('checked')">
                     ✈ Checked
@@ -127,14 +82,55 @@
 
             <div class="running-hint" id="runningHint" style="display:none">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                <span id="hintText">Scale running total for <strong>All bags</strong>: <strong id="hintTotal">0</strong> kg — enter new reading</span>
+                <span id="hintText">Running total: <strong id="hintTotal">0.0</strong> kg</span>
             </div>
-
-            <div id="overLimitAlert" style="display:none"></div>
         </div>
 
-        <!-- Bag List -->
-        <div>
+        <!-- ─── SETTINGS (collapsible) ─────────────────────── -->
+        <div class="settings-toggle" onclick="toggleSettings()">
+            <span>⚙️ Settings</span>
+            <span id="settingsArrow">▼</span>
+        </div>
+        <div class="settings-collapsible" id="settingsPanel">
+            <div class="settings-grid">
+                <!-- Passenger Mode -->
+                <div class="settings-mini">
+                    <div class="settings-mini-label">Passenger</div>
+                    <div class="settings-mini-buttons">
+                        <button class="settings-mini-btn active" id="singlePaxBtn" onclick="setPaxMode('single')">👤 Single</button>
+                        <button class="settings-mini-btn" id="poolPaxBtn" onclick="setPaxMode('pool')">👥 Pool</button>
+                    </div>
+                </div>
+
+                <!-- Input Mode -->
+                <div class="settings-mini">
+                    <div class="settings-mini-label">Input</div>
+                    <div class="settings-mini-buttons">
+                        <button class="settings-mini-btn active" id="scaleModeBtn" onclick="setInputMode('scale')">📊 Scale</button>
+                        <button class="settings-mini-btn" id="singleModeBtn" onclick="setInputMode('single')">📦 Single</button>
+                    </div>
+                    <div class="settings-mini-hint" id="modeHint">Enter cumulative scale reading</div>
+                </div>
+
+                <!-- Edit Limits -->
+                <div class="settings-mini">
+                    <div class="settings-mini-label">Limits</div>
+                    <div class="settings-mini-limits">
+                        <div>
+                            <span class="settings-mini-tag">Checked</span>
+                            <input type="number" class="settings-mini-input" id="checkedLimitDisplay" value="25" min="1" max="200" step="0.5" />
+                        </div>
+                        <div>
+                            <span class="settings-mini-tag">Cabin</span>
+                            <input type="number" class="settings-mini-input" id="cabinLimitDisplay" value="7" min="1" max="100" step="0.5" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── BAG LIST ────────────────────────────────────── -->
+        <div class="bag-section">
             <div class="bag-list-header">
                 <span class="bag-list-title" id="bagCountLabel">Bags (0)</span>
                 <button class="clear-btn" onclick="clearAll()">Clear All</button>
@@ -142,7 +138,7 @@
             <div class="bag-list" id="bagList">
                 <div class="empty-state">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
-                    <p>No bags added yet.<br>Enter a scale reading above.</p>
+                    <p>No bags added yet.<br>Enter a weight above.</p>
                 </div>
             </div>
         </div>
