@@ -397,6 +397,9 @@ body {
 
 .bag-info {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .bag-name {
@@ -405,13 +408,19 @@ body {
   color: var(--text);
 }
 
+.bag-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+
 .bag-type-tag {
   display: inline-block;
   padding: 1px 8px;
   border-radius: 99px;
   font-size: 11px;
   font-weight: 600;
-  margin-top: 2px;
 }
 .bag-type-tag.checked {
   background: rgba(59, 130, 246, 0.15);
@@ -420,6 +429,50 @@ body {
 .bag-type-tag.cabin {
   background: rgba(16, 185, 129, 0.15);
   color: #10b981;
+}
+
+/* ─── BAG WARNING TAGS ─────────────────────────── */
+.bag-warning-tag {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 99px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+/* Orange "heavy" tag */
+.bag-warning-tag.heavy {
+  background: rgba(245, 158, 11, 0.2);
+  color: #d97706;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+/* Red "+32kg" tag */
+.bag-warning-tag.over-32 {
+  background: rgba(239, 68, 68, 0.15);
+  color: #dc2626;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+/* ─── Dark theme support ────────────────────────────────── */
+[data-theme="dark-grey"] .bag-warning-tag.heavy {
+  background: rgba(245, 158, 11, 0.25);
+  color: #fbbf24;
+}
+[data-theme="dark-grey"] .bag-warning-tag.over-32 {
+  background: rgba(239, 68, 68, 0.25);
+  color: #f87171;
+}
+
+[data-theme="amoled"] .bag-warning-tag.heavy {
+  background: rgba(245, 158, 11, 0.3);
+  color: #fbbf24;
+}
+[data-theme="amoled"] .bag-warning-tag.over-32 {
+  background: rgba(239, 68, 68, 0.3);
+  color: #f87171;
 }
 
 .bag-weight {
@@ -710,5 +763,32 @@ body {
   .add-btn {
     padding: 10px 14px;
     font-size: 13px;
+  }
+  .bag-item {
+    padding: 10px 12px;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .bag-info {
+    min-width: 0;
+  }
+  .bag-name {
+    font-size: 13px;
+  }
+  .bag-type-tag,
+  .bag-warning-tag {
+    font-size: 9px;
+    padding: 1px 6px;
+  }
+  .bag-weight {
+    font-size: 17px;
+  }
+  .bag-delete {
+    width: 24px;
+    height: 24px;
+  }
+  .bag-delete svg {
+    width: 13px;
+    height: 13px;
   }
 }
