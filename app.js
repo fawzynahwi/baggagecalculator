@@ -1,6 +1,3 @@
-
-
-
 const DEFAULTS = {
   checkedLimit: 25,
   cabinLimit: 7,
@@ -11,7 +8,7 @@ const DEFAULTS = {
   cabinTotal: 0,
   paxMode: 'single',
   guestCount: 0,
-  inputMode: 'scale', // <-- ADD THIS LINE
+  inputMode: 'scale',
 };
 
 let state = {};
@@ -25,24 +22,6 @@ function saveState() {
   localStorage.setItem('baggagecheck_state', JSON.stringify(state));
 }
 
-function setInputMode(mode) {
-  state.inputMode = mode;
-
-  // Toggle active class on buttons
-  document.getElementById('scaleModeBtn').classList.toggle('active', mode === 'scale');
-  document.getElementById('singleModeBtn').classList.toggle('active', mode === 'single');
-
-  // Update hint text
-  const hint = document.getElementById('modeHint');
-  if (mode === 'scale') {
-    hint.textContent = 'Enter cumulative scale reading';
-  } else {
-    hint.textContent = 'Enter individual bag weight';
-  }
-
-  saveState();
-  document.getElementById('scaleInput').focus();
-}
 
 
 function applyTheme() {
@@ -77,6 +56,7 @@ function cycleTheme() {
   const labels = { light: 'Light mode', 'dark-grey': 'Dark grey', amoled: 'AMOLED black' };
   showToast(labels[state.theme]);
 }
+
 
 
 
@@ -121,6 +101,24 @@ function updateGuestDisplay() {
 
 
 
+function setInputMode(mode) {
+  state.inputMode = mode;
+
+  document.getElementById('scaleModeBtn').classList.toggle('active', mode === 'scale');
+  document.getElementById('singleModeBtn').classList.toggle('active', mode === 'single');
+
+  const hint = document.getElementById('modeHint');
+  if (mode === 'scale') {
+    hint.textContent = 'Enter cumulative scale reading';
+  } else {
+    hint.textContent = 'Enter individual bag weight';
+  }
+
+  saveState();
+  document.getElementById('scaleInput').focus();
+}
+
+
 
 let selectedType = 'checked';
 
@@ -139,7 +137,9 @@ function updateHint() {
 
   if (state.bags.length > 0) {
     hint.style.display = 'flex';
-    document.getElementById('hintType').textContent = 'All bags';
+    const hintText = document.getElementById('hintText');
+    hintText.innerHTML = `Scale running total for <strong>All bags</strong>: <strong id="hintTotal">${allTotal.toFixed(1)}</strong> kg — enter new reading`;
+    // keep the hintTotal element updated
     document.getElementById('hintTotal').textContent = allTotal.toFixed(1);
   } else {
     hint.style.display = 'none';
@@ -164,7 +164,6 @@ function addBag() {
   let bagWeight;
 
   if (state.inputMode === 'scale') {
-    // SCALE MODE: cumulative reading
     if (reading <= prevTotalAll) {
       showToast('Reading must be greater than ' + prevTotalAll.toFixed(1) + ' kg');
       input.focus();
@@ -172,7 +171,6 @@ function addBag() {
     }
     bagWeight = Math.round((reading - prevTotalAll) * 10) / 10;
   } else {
-    // SINGLE MODE: direct bag weight
     bagWeight = Math.round(reading * 10) / 10;
   }
 
@@ -210,6 +208,8 @@ function addBag() {
 
   input.focus();
 }
+
+
 
 
 
@@ -338,6 +338,7 @@ function showToast(msg) {
 
 
 
+
 function updateLimit(type) {
   const id = type === 'checked' ? 'checkedLimitDisplay' : 'cabinLimitDisplay';
   const val = parseFloat(document.getElementById(id).value);
@@ -373,28 +374,24 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById(state.paxMode + 'PaxBtn').classList.add('active');
   }
 
-  document.getElementById('themeToggleBtn').addEventListener('click', cycleTheme);
-
-// Set initial input mode UI
-if (state.inputMode === 'scale' || state.inputMode === 'single') {
-  document.getElementById(state.inputMode + 'ModeBtn').classList.add('active');
-  const hint = document.getElementById('modeHint');
-  if (state.inputMode === 'scale') {
-    hint.textContent = 'Enter cumulative scale reading';
+  // Set initial input mode UI
+  if (state.inputMode === 'scale' || state.inputMode === 'single') {
+    document.getElementById(state.inputMode + 'ModeBtn').classList.add('active');
+    const hint = document.getElementById('modeHint');
+    if (state.inputMode === 'scale') {
+      hint.textContent = 'Enter cumulative scale reading';
+    } else {
+      hint.textContent = 'Enter individual bag weight';
+    }
   } else {
-    hint.textContent = 'Enter individual bag weight';
+    state.inputMode = 'scale';
+    document.getElementById('scaleModeBtn').classList.add('active');
   }
-} else {
-  // default fallback
-  state.inputMode = 'scale';
-  document.getElementById('scaleModeBtn').classList.add('active');
-}
 
+  document.getElementById('themeToggleBtn').addEventListener('click', cycleTheme);
 
   const guestBtn = document.getElementById('guestIncrementBtn');
   guestBtn.addEventListener('click', incrementGuest);
-
-
 
   let pressTimer = null;
   guestBtn.addEventListener('mousedown', () => {
@@ -416,8 +413,6 @@ if (state.inputMode === 'scale' || state.inputMode === 'single') {
     }
   });
 
-
-
   guestBtn.addEventListener('touchstart', (e) => {
     pressTimer = setTimeout(() => {
       resetGuest();
@@ -436,9 +431,6 @@ if (state.inputMode === 'scale' || state.inputMode === 'single') {
       pressTimer = null;
     }
   });
-
-
-
 
   ['checked', 'cabin'].forEach(type => {
     const id = type === 'checked' ? 'checkedLimitDisplay' : 'cabinLimitDisplay';
