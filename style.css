@@ -207,7 +207,7 @@ body {
 }
 
 .mode-grid-btn {
-  padding: 8px 4px;
+  padding: 14px 4px;
   border-radius: var(--radius-sm);
   border: 2px solid var(--border);
   background: transparent;
