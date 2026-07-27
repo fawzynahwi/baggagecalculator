@@ -125,10 +125,11 @@ body {
 
 .status-top-row {
   display: flex;
-  justify-content: space-between;
+  flex-direction:column;
+  justify-content: center;
   align-items: baseline;
   gap: 8px;
-  flex-wrap: wrap;
+  
 }
 
 .status-remain {
@@ -736,7 +737,7 @@ body {
   }
   .status-bar {
     padding: 10px 12px;
-    gap: 8px;
+    gap: 25px;
   }
   .status-item {
     gap: 3px;
