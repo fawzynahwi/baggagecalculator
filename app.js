@@ -76,12 +76,6 @@ function setInputMode(mode) {
   document.getElementById('scaleModeBtn').classList.toggle('active', mode === 'scale');
   document.getElementById('singleModeBtn').classList.toggle('active', mode === 'single');
 
-  const hint = document.getElementById('modeHint');
-  if (mode === 'scale') {
-    hint.textContent = 'Enter cumulative scale reading';
-  } else {
-    hint.textContent = 'Enter individual bag weight';
-  }
   saveState();
   document.getElementById('scaleInput').focus();
 }
@@ -310,13 +304,6 @@ function updateLimit(type) {
   showToast(`${type === 'checked' ? 'Checked' : 'Cabin'} limit set to ${val} kg`);
 }
 
-function toggleSettings() {
-  const panel = document.getElementById('settingsPanel');
-  const arrow = document.getElementById('settingsArrow');
-  panel.classList.toggle('open');
-  arrow.textContent = panel.classList.contains('open') ? '▲' : '▼';
-}
-
 document.addEventListener('DOMContentLoaded', () => {
   loadState();
   applyTheme();
@@ -332,10 +319,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (state.inputMode === 'scale' || state.inputMode === 'single') {
     const btn = document.getElementById(state.inputMode + 'ModeBtn');
     if (btn) btn.classList.add('active');
-    const hint = document.getElementById('modeHint');
-    if (hint) {
-      hint.textContent = state.inputMode === 'scale' ? 'Enter cumulative scale reading' : 'Enter individual bag weight';
-    }
   } else {
     state.inputMode = 'scale';
     const btn = document.getElementById('scaleModeBtn');
@@ -360,76 +343,4 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   document.querySelector('.add-btn').addEventListener('click', addBag);
-
-  // ─── SWIPE TO REVEAL SETTINGS ──────────────────────────
-  const entryPanel = document.querySelector('.entry-panel');
-  let startX = 0;
-  let startY = 0;
-  let isSwiping = false;
-
-  function handleSwipeStart(e) {
-    const target = e.target;
-    // Ignore swipes on inputs, buttons, and their children
-    if (target.tagName === 'INPUT' || target.tagName === 'BUTTON' || target.closest('button') || target.closest('input')) {
-      return;
-    }
-    const touch = e.touches ? e.touches[0] : e;
-    startX = touch.clientX;
-    startY = touch.clientY;
-    isSwiping = false;
-  }
-
-  function handleSwipeMove(e) {
-    if (startX === 0) return;
-    const touch = e.touches ? e.touches[0] : e;
-    const deltaX = touch.clientX - startX;
-    const deltaY = touch.clientY - startY;
-
-    // Detect horizontal swipe and prevent scroll
-    if (Math.abs(deltaX) > 10 && Math.abs(deltaX) > Math.abs(deltaY)) {
-      e.preventDefault();
-      isSwiping = true;
-    }
-  }
-
-  function handleSwipeEnd(e) {
-    if (!isSwiping || startX === 0) {
-      startX = 0;
-      return;
-    }
-    const touch = e.changedTouches ? e.changedTouches[0] : e;
-    const deltaX = touch.clientX - startX;
-
-    const panel = document.getElementById('settingsPanel');
-    const arrow = document.getElementById('settingsArrow');
-
-    if (deltaX > 50) {
-      // Swipe Right → Open Settings
-      if (!panel.classList.contains('open')) {
-        panel.classList.add('open');
-        arrow.textContent = '▲';
-      }
-    } else if (deltaX < -50) {
-      // Swipe Left → Close Settings
-      if (panel.classList.contains('open')) {
-        panel.classList.remove('open');
-        arrow.textContent = '▼';
-      }
-    }
-    startX = 0;
-    isSwiping = false;
-  }
-
-  if (entryPanel) {
-    // Touch events (mobile)
-    entryPanel.addEventListener('touchstart', handleSwipeStart, { passive: false });
-    entryPanel.addEventListener('touchmove', handleSwipeMove, { passive: false });
-    entryPanel.addEventListener('touchend', handleSwipeEnd, { passive: false });
-
-    // Mouse events (desktop testing)
-    entryPanel.addEventListener('mousedown', handleSwipeStart);
-    entryPanel.addEventListener('mousemove', handleSwipeMove);
-    entryPanel.addEventListener('mouseup', handleSwipeEnd);
-    entryPanel.addEventListener('dragstart', (e) => e.preventDefault());
-  }
 });
