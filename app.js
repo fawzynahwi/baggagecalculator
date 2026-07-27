@@ -214,21 +214,40 @@ function renderBags() {
     return;
   }
 
-  list.innerHTML = state.bags.map(bag => `
-    <div class="bag-item">
-      <div class="bag-num">${bag.number}</div>
-      <div class="bag-info">
-        <div class="bag-name">Bag ${bag.number}</div>
-        <span class="bag-type-tag ${bag.type}">${bag.type}</span>
+  list.innerHTML = state.bags.map(bag => {
+    // ─── Determine warning tags ──────────────────────────
+    let warningTags = '';
+    if (bag.type === 'checked') {
+      if (bag.weight > 32) {
+        warningTags = `<span class="bag-warning-tag over-32">+32kg</span>`;
+      } else if (bag.weight > 23) {
+        warningTags = `<span class="bag-warning-tag heavy">heavy</span>`;
+      }
+    } else if (bag.type === 'cabin') {
+      if (bag.weight > 8) {
+        warningTags = `<span class="bag-warning-tag heavy">heavy</span>`;
+      }
+    }
+
+    return `
+      <div class="bag-item">
+        <div class="bag-num">${bag.number}</div>
+        <div class="bag-info">
+          <div class="bag-name">Bag ${bag.number}</div>
+          <div class="bag-tags">
+            <span class="bag-type-tag ${bag.type}">${bag.type}</span>
+            ${warningTags}
+          </div>
+        </div>
+        <div style="text-align:right">
+          <div class="bag-weight">${bag.weight.toFixed(1)}<span class="bag-weight-unit"> kg</span></div>
+        </div>
+        <button class="bag-delete" onclick="deleteBag(${bag.id})" title="Remove bag">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+        </button>
       </div>
-      <div style="text-align:right">
-        <div class="bag-weight">${bag.weight.toFixed(1)}<span class="bag-weight-unit"> kg</span></div>
-      </div>
-      <button class="bag-delete" onclick="deleteBag(${bag.id})" title="Remove bag">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-      </button>
-    </div>
-  `).join('');
+    `;
+  }).join('');
 }
 
 function renderLimits() {
