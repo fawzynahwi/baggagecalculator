@@ -84,14 +84,18 @@
                 </div>
             </div>
 
-            <!-- ─── Right Column Bottom: Guest Counter ──────── -->
-            <div class="guest-counter-card">
-                <div class="guest-counter-label">Guests Checked In</div>
-                <div class="guest-counter-number" id="guestCountDisplay">0</div>
-                <button class="guest-counter-btn" id="guestIncrementBtn">
-                    +1
-                </button>
-                <div class="guest-hint">(long press to reset)</div>
+            <!-- ─── Right Column Bottom: Mode Selector ──────── -->
+            <div class="mode-selector-card">
+                <div class="mode-selector-label">Input Mode</div>
+                <div class="mode-selector-stack">
+                    <button class="mode-btn active" id="scaleModeBtn" onclick="setInputMode('scale')">
+                        <span class="mode-emoji">📊</span> Scale Mode
+                    </button>
+                    <button class="mode-btn" id="singleModeBtn" onclick="setInputMode('single')">
+                        <span class="mode-emoji">📦</span> Single Mode
+                    </button>
+                </div>
+                <div class="mode-hint" id="modeHint">Enter cumulative scale reading</div>
             </div>
 
         </div>
@@ -123,8 +127,7 @@
 
             <div class="running-hint" id="runningHint" style="display:none">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                Scale running total for <strong id="hintType">checked</strong>:
-                <strong id="hintTotal">0</strong> kg — enter new reading
+                <span id="hintText">Scale running total for <strong>All bags</strong>: <strong id="hintTotal">0</strong> kg — enter new reading</span>
             </div>
 
             <div id="overLimitAlert" style="display:none"></div>
