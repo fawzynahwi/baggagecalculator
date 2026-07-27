@@ -11,6 +11,7 @@ const DEFAULTS = {
   cabinTotal: 0,
   paxMode: 'single',
   guestCount: 0,
+  inputMode: 'scale', // <-- ADD THIS LINE
 };
 
 let state = {};
@@ -24,6 +25,24 @@ function saveState() {
   localStorage.setItem('baggagecheck_state', JSON.stringify(state));
 }
 
+function setInputMode(mode) {
+  state.inputMode = mode;
+
+  // Toggle active class on buttons
+  document.getElementById('scaleModeBtn').classList.toggle('active', mode === 'scale');
+  document.getElementById('singleModeBtn').classList.toggle('active', mode === 'single');
+
+  // Update hint text
+  const hint = document.getElementById('modeHint');
+  if (mode === 'scale') {
+    hint.textContent = 'Enter cumulative scale reading';
+  } else {
+    hint.textContent = 'Enter individual bag weight';
+  }
+
+  saveState();
+  document.getElementById('scaleInput').focus();
+}
 
 
 function applyTheme() {
@@ -135,21 +154,28 @@ function addBag() {
   const input = document.getElementById('scaleInput');
   const reading = parseFloat(input.value);
 
-  if (isNaN(reading) || reading < 0) {
-    showToast('Enter a valid scale reading');
+  if (isNaN(reading) || reading <= 0) {
+    showToast('Enter a valid weight');
     input.focus();
     return;
   }
 
   const prevTotalAll = state.checkedTotal + state.cabinTotal;
+  let bagWeight;
 
-  if (reading <= prevTotalAll) {
-    showToast('Reading must be greater than ' + prevTotalAll.toFixed(1) + ' kg');
-    input.focus();
-    return;
+  if (state.inputMode === 'scale') {
+    // SCALE MODE: cumulative reading
+    if (reading <= prevTotalAll) {
+      showToast('Reading must be greater than ' + prevTotalAll.toFixed(1) + ' kg');
+      input.focus();
+      return;
+    }
+    bagWeight = Math.round((reading - prevTotalAll) * 10) / 10;
+  } else {
+    // SINGLE MODE: direct bag weight
+    bagWeight = Math.round(reading * 10) / 10;
   }
 
-  const bagWeight = Math.round((reading - prevTotalAll) * 10) / 10;
   const bagNumber = state.bags.length + 1;
 
   const bag = {
@@ -184,7 +210,6 @@ function addBag() {
 
   input.focus();
 }
-
 
 
 
@@ -350,7 +375,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('themeToggleBtn').addEventListener('click', cycleTheme);
 
-
+// Set initial input mode UI
+if (state.inputMode === 'scale' || state.inputMode === 'single') {
+  document.getElementById(state.inputMode + 'ModeBtn').classList.add('active');
+  const hint = document.getElementById('modeHint');
+  if (state.inputMode === 'scale') {
+    hint.textContent = 'Enter cumulative scale reading';
+  } else {
+    hint.textContent = 'Enter individual bag weight';
+  }
+} else {
+  // default fallback
+  state.inputMode = 'scale';
+  document.getElementById('scaleModeBtn').classList.add('active');
+}
 
 
   const guestBtn = document.getElementById('guestIncrementBtn');
