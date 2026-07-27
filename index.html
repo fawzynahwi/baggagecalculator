@@ -32,27 +32,34 @@
 
         <!-- ─── STATUS BAR ─────────────────────────────────── -->
         <div class="status-bar">
+            <!-- Checked -->
             <div class="status-item checked-status">
-                <div class="status-label">Checked</div>
-                <div class="status-progress">
-                    <div class="status-bar-bg">
-                        <div class="status-bar-fill" id="checkedBar" style="width:0%"></div>
-                    </div>
+                <div class="status-top">
+                    <span class="status-label">Checked</span>
                     <span class="status-numbers">
-                        <span id="checkedUsed">0.0</span> / <span id="checkedLimitDisplay">25</span> kg
+                        <span id="checkedUsed">0.0</span> / 
+                        <input type="number" class="status-limit-input" id="checkedLimitDisplay" value="25" min="1" max="200" step="0.5" />
+                        kg
                     </span>
+                </div>
+                <div class="status-bar-bg">
+                    <div class="status-bar-fill" id="checkedBar" style="width:0%"></div>
                 </div>
                 <div class="status-remain" id="checkedRemain">25.0 kg left</div>
             </div>
+
+            <!-- Cabin -->
             <div class="status-item cabin-status">
-                <div class="status-label">Cabin</div>
-                <div class="status-progress">
-                    <div class="status-bar-bg">
-                        <div class="status-bar-fill" id="cabinBar" style="width:0%"></div>
-                    </div>
+                <div class="status-top">
+                    <span class="status-label">Cabin</span>
                     <span class="status-numbers">
-                        <span id="cabinUsed">0.0</span> / <span id="cabinLimitDisplay">7</span> kg
+                        <span id="cabinUsed">0.0</span> / 
+                        <input type="number" class="status-limit-input" id="cabinLimitDisplay" value="7" min="1" max="100" step="0.5" />
+                        kg
                     </span>
+                </div>
+                <div class="status-bar-bg">
+                    <div class="status-bar-fill" id="cabinBar" style="width:0%"></div>
                 </div>
                 <div class="status-remain" id="cabinRemain">7.0 kg left</div>
             </div>
@@ -110,21 +117,6 @@
                         <button class="settings-mini-btn" id="singleModeBtn" onclick="setInputMode('single')">📦 Single</button>
                     </div>
                     <div class="settings-mini-hint" id="modeHint">Enter cumulative scale reading</div>
-                </div>
-
-                <!-- Edit Limits -->
-                <div class="settings-mini">
-                    <div class="settings-mini-label">Limits</div>
-                    <div class="settings-mini-limits">
-                        <div>
-                            <span class="settings-mini-tag">Checked</span>
-                            <input type="number" class="settings-mini-input" id="checkedLimitDisplay" value="25" min="1" max="200" step="0.5" />
-                        </div>
-                        <div>
-                            <span class="settings-mini-tag">Cabin</span>
-                            <input type="number" class="settings-mini-input" id="cabinLimitDisplay" value="7" min="1" max="100" step="0.5" />
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
