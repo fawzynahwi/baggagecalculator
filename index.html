@@ -34,11 +34,13 @@
         <div class="status-bar">
             <!-- Checked -->
             <div class="status-item checked-status">
-                <div class="status-remain" id="checkedRemain">25.0 kg left</div>
-                <div class="status-numbers">
-                    <span id="checkedUsed">0.0</span> / 
-                    <input type="number" class="status-limit-input" id="checkedLimitDisplay" value="25" min="1" max="200" step="0.5" />
-                    kg
+                <div class="status-top-row">
+                    <span class="status-remain" id="checkedRemain">25.0 kg left</span>
+                    <span class="status-numbers">
+                        <span id="checkedUsed">0.0</span> / 
+                        <input type="number" class="status-limit-input" id="checkedLimitDisplay" value="25" min="1" max="200" step="0.5" />
+                        kg
+                    </span>
                 </div>
                 <div class="status-bar-bg">
                     <div class="status-bar-fill" id="checkedBar" style="width:0%"></div>
@@ -47,11 +49,13 @@
 
             <!-- Cabin -->
             <div class="status-item cabin-status">
-                <div class="status-remain" id="cabinRemain">7.0 kg left</div>
-                <div class="status-numbers">
-                    <span id="cabinUsed">0.0</span> / 
-                    <input type="number" class="status-limit-input" id="cabinLimitDisplay" value="7" min="1" max="100" step="0.5" />
-                    kg
+                <div class="status-top-row">
+                    <span class="status-remain" id="cabinRemain">7.0 kg left</span>
+                    <span class="status-numbers">
+                        <span id="cabinUsed">0.0</span> / 
+                        <input type="number" class="status-limit-input" id="cabinLimitDisplay" value="7" min="1" max="100" step="0.5" />
+                        kg
+                    </span>
                 </div>
                 <div class="status-bar-bg">
                     <div class="status-bar-fill" id="cabinBar" style="width:0%"></div>
@@ -61,15 +65,15 @@
 
         <!-- ─── MODE GRID (3×2) ────────────────────────────── -->
         <div class="mode-grid">
-            <!-- Row 1: Passenger modes -->
+            <!-- Row 1 -->
             <button class="mode-grid-btn active" id="singlePaxBtn" onclick="setPaxMode('single')">👤 Single Pax</button>
-            <button class="mode-grid-btn" id="poolPaxBtn" onclick="setPaxMode('pool')">👥 Pool Pax</button>
-            <button class="mode-grid-btn active" id="tabChecked" onclick="selectType('checked')">✈ Checked</button>
-
-            <!-- Row 2: Input modes -->
             <button class="mode-grid-btn active" id="scaleModeBtn" onclick="setInputMode('scale')">📊 Scale</button>
             <button class="mode-grid-btn" id="singleModeBtn" onclick="setInputMode('single')">📦 Single</button>
+
+            <!-- Row 2 -->
+            <button class="mode-grid-btn active" id="tabChecked" onclick="selectType('checked')">✈ Checked</button>
             <button class="mode-grid-btn" id="tabCabin" onclick="selectType('cabin')">🎒 Cabin</button>
+            <button class="mode-grid-btn" id="poolPaxBtn" onclick="setPaxMode('pool')">👥 Pool Pax</button>
         </div>
 
         <!-- ─── QUICK ENTRY ─────────────────────────────────── -->
