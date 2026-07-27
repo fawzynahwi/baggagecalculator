@@ -54,11 +54,10 @@ function cycleTheme() {
   showToast(labels[state.theme]);
 }
 
+// ─── PAX MODE (Single / Pool) ────────────────────────────
 function setPaxMode(mode) {
   state.paxMode = mode;
-  document.getElementById('singlePaxBtn').classList.toggle('active', mode === 'single');
-  document.getElementById('poolPaxBtn').classList.toggle('active', mode === 'pool');
-
+  updatePaxButton();
   if (mode === 'single') {
     state.checkedLimit = 25;
     state.cabinLimit = 7;
@@ -71,15 +70,37 @@ function setPaxMode(mode) {
   showToast(mode === 'single' ? 'Single Pax: 25kg checked, 7kg cabin' : 'Pool Pax: 50kg checked, 14kg cabin');
 }
 
+function updatePaxButton() {
+  const btn = document.getElementById('paxToggleBtn');
+  if (state.paxMode === 'single') {
+    btn.textContent = '👤 Single Pax';
+    btn.classList.add('active');
+  } else {
+    btn.textContent = '👥 Pool Pax';
+    btn.classList.remove('active');
+  }
+}
+
+// ─── INPUT MODE (Scale / Single) ─────────────────────────
 function setInputMode(mode) {
   state.inputMode = mode;
-  document.getElementById('scaleModeBtn').classList.toggle('active', mode === 'scale');
-  document.getElementById('singleModeBtn').classList.toggle('active', mode === 'single');
-
+  updateInputButton();
   saveState();
   document.getElementById('scaleInput').focus();
 }
 
+function updateInputButton() {
+  const btn = document.getElementById('inputToggleBtn');
+  if (state.inputMode === 'scale') {
+    btn.textContent = '📊 Scale';
+    btn.classList.add('active');
+  } else {
+    btn.textContent = '📦 Single';
+    btn.classList.remove('active');
+  }
+}
+
+// ─── SELECT TYPE ──────────────────────────────────────────
 let selectedType = 'checked';
 
 function selectType(type) {
@@ -215,7 +236,6 @@ function renderBags() {
   }
 
   list.innerHTML = state.bags.map(bag => {
-    // ─── Determine warning tags ──────────────────────────
     let warningTags = '';
     if (bag.type === 'checked') {
       if (bag.weight > 32) {
@@ -314,12 +334,124 @@ function updateLimit(type) {
   else state.cabinLimit = val;
 
   state.paxMode = null;
-  document.getElementById('singlePaxBtn').classList.remove('active');
-  document.getElementById('poolPaxBtn').classList.remove('active');
+  updatePaxButton();
 
   saveState();
   renderLimits();
   showToast(`${type === 'checked' ? 'Checked' : 'Cabin'} limit set to ${val} kg`);
+}
+
+// ─── TOGGLE BUTTON HELPERS ──────────────────────────────
+function setupToggleButton(btnId, getState, setState, states, labels, activeClass) {
+  const btn = document.getElementById(btnId);
+  let holdTimer = null;
+  let isHeld = false;
+
+  function updateButton() {
+    const current = getState();
+    const idx = states.indexOf(current);
+    btn.textContent = labels[idx];
+    btn.classList.toggle(activeClass, idx === 0);
+  }
+
+  function toggleMode() {
+    const current = getState();
+    const idx = states.indexOf(current);
+    const nextIdx = (idx + 1) % states.length;
+    setState(states[nextIdx]);
+    updateButton();
+  }
+
+  function switchToAlternate() {
+    const current = getState();
+    const idx = states.indexOf(current);
+    // Switch to the OTHER mode (not the current one)
+    const altIdx = (idx + 1) % states.length;
+    setState(states[altIdx]);
+    updateButton();
+  }
+
+  // Mouse events
+  btn.addEventListener('mousedown', function(e) {
+    isHeld = true;
+    btn.classList.add('pressed');
+    holdTimer = setTimeout(() => {
+      if (isHeld) {
+        switchToAlternate();
+        btn.classList.remove('pressed');
+        isHeld = false;
+        const label = btn.textContent;
+        showToast(`Switched to ${label}`);
+      }
+      holdTimer = null;
+    }, 600);
+  });
+
+  btn.addEventListener('mouseup', function(e) {
+    if (isHeld && holdTimer) {
+      clearTimeout(holdTimer);
+      holdTimer = null;
+      btn.classList.remove('pressed');
+      // Single click = toggle to the other mode
+      toggleMode();
+      const label = btn.textContent;
+      showToast(`Switched to ${label}`);
+    }
+    isHeld = false;
+  });
+
+  btn.addEventListener('mouseleave', function(e) {
+    isHeld = false;
+    if (holdTimer) {
+      clearTimeout(holdTimer);
+      holdTimer = null;
+    }
+    btn.classList.remove('pressed');
+  });
+
+  // Touch events
+  btn.addEventListener('touchstart', function(e) {
+    e.preventDefault();
+    isHeld = true;
+    btn.classList.add('pressed');
+    holdTimer = setTimeout(() => {
+      if (isHeld) {
+        switchToAlternate();
+        btn.classList.remove('pressed');
+        isHeld = false;
+        const label = btn.textContent;
+        showToast(`Switched to ${label}`);
+      }
+      holdTimer = null;
+    }, 600);
+  }, { passive: false });
+
+  btn.addEventListener('touchend', function(e) {
+    e.preventDefault();
+    if (isHeld && holdTimer) {
+      clearTimeout(holdTimer);
+      holdTimer = null;
+      btn.classList.remove('pressed');
+      toggleMode();
+      const label = btn.textContent;
+      showToast(`Switched to ${label}`);
+    }
+    isHeld = false;
+  }, { passive: false });
+
+  btn.addEventListener('touchcancel', function(e) {
+    isHeld = false;
+    if (holdTimer) {
+      clearTimeout(holdTimer);
+      holdTimer = null;
+    }
+    btn.classList.remove('pressed');
+  });
+
+  // Initial update
+  updateButton();
+
+  return { updateButton };
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -329,19 +461,24 @@ document.addEventListener('DOMContentLoaded', () => {
   renderLimits();
   updateHint();
 
-  if (state.paxMode === 'single' || state.paxMode === 'pool') {
-    const btn = document.getElementById(state.paxMode + 'PaxBtn');
-    if (btn) btn.classList.add('active');
-  }
+  // ─── Setup toggle buttons ──────────────────────────────
+  setupToggleButton(
+    'inputToggleBtn',
+    () => state.inputMode,
+    (mode) => setInputMode(mode),
+    ['scale', 'single'],
+    ['📊 Scale', '📦 Single'],
+    'active'
+  );
 
-  if (state.inputMode === 'scale' || state.inputMode === 'single') {
-    const btn = document.getElementById(state.inputMode + 'ModeBtn');
-    if (btn) btn.classList.add('active');
-  } else {
-    state.inputMode = 'scale';
-    const btn = document.getElementById('scaleModeBtn');
-    if (btn) btn.classList.add('active');
-  }
+  setupToggleButton(
+    'paxToggleBtn',
+    () => state.paxMode,
+    (mode) => setPaxMode(mode),
+    ['single', 'pool'],
+    ['👤 Single Pax', '👥 Pool Pax'],
+    'active'
+  );
 
   document.getElementById('themeToggleBtn').addEventListener('click', cycleTheme);
 
@@ -362,7 +499,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.querySelector('.add-btn').addEventListener('click', addBag);
 
-  // ─── HOLD TO CLEAR ALL (no popup) ──────────────────────
+  // ─── HOLD TO CLEAR ALL ──────────────────────────────────
   const clearBtn = document.getElementById('clearAllBtn');
   let holdTimer = null;
   let isHeld = false;
@@ -389,12 +526,10 @@ document.addEventListener('DOMContentLoaded', () => {
     clearBtn.classList.remove('pressed');
   }
 
-  // Mouse events
   clearBtn.addEventListener('mousedown', startHold);
   clearBtn.addEventListener('mouseup', cancelHold);
   clearBtn.addEventListener('mouseleave', cancelHold);
 
-  // Touch events
   clearBtn.addEventListener('touchstart', function(e) {
     e.preventDefault();
     startHold();
